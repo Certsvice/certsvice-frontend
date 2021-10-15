@@ -1,4 +1,4 @@
-export const cerisviceAddress = '0xa80FBA7a1E6C0382e13dAa9702a13Be55209FfFE'
+export const cerisviceAddress = '0x2a7C20e5a8234cd13583f09dA1DCDF0bc549772B'
 
 export const abi = [
 	{
