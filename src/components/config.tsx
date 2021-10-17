@@ -1,4 +1,4 @@
-export const cerisviceAddress = '0x2a7C20e5a8234cd13583f09dA1DCDF0bc549772B'
+export const cerisviceAddress = '0x0a689ee6DF945f55FF63d47e262aA56a429524cd'
 
 export const abi = [
 	{
@@ -123,6 +123,25 @@ export const abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "data",
+				"type": "string"
+			}
+		],
+		"name": "getTest",
+		"outputs": [
+			{
+				"internalType": "bytes32",
+				"name": "",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "_university",
 				"type": "address"
@@ -137,6 +156,19 @@ export const abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "data",
+				"type": "string"
+			}
+		],
+		"name": "setTest",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
