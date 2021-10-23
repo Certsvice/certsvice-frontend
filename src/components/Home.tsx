@@ -59,14 +59,28 @@ const Home = (props: any) => {
   return (
     <Container>
       <Content>
-        <Upload>
+        <Input>
+          <Description1>
+            An easy way to check and verify your certificates
+          </Description1>
+          {/* <Description>
+          <h1>An easy way to check and verify your certificates</h1>
+          <p>
+            Whether you're a student or an employer, OpenCerts lets you verify
+            the certificates you have of anyone from any institution. All in one
+            place.
+          </p>
+          <img src="/images/certificate.svg" alt="Certificate" />
+        </Description> */}
+        </Input>
+        {/* <Upload>
           <input
             type="file"
             onChange={(e) => getInput(e.target.files)}
             onClick={(e) => (e.currentTarget.value = "")}
           ></input>
-        </Upload>
-        <button onClick={(e) => verify()}>Check</button>
+        </Upload> */}
+        {/* <button onClick={(e) => verify()}>Check</button> */}
       </Content>
     </Container>
   );
@@ -93,13 +107,13 @@ const Content = styled.div`
   padding: 80px 40px;
   height: 100%;
 `;
-const Upload = styled.div`
+
+const Input = styled.div`
   margin-bottom: 2vw;
-  max-width: 200px;
-  height: 200px;
-  flex-wrap: warp;
+  max-width: 650px;
+  flex-wrap: wrap;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   margin-top: 0;
   align-items: center;
@@ -109,12 +123,33 @@ const Upload = styled.div`
   transition-timing-function: ease-out;
   transition: opacity 0.2s;
   width: 100%;
-  border-radius: 50px;
-  background: url("./images/home-icon.svg");
-  background-repeat: no-repeat;
-  background-position: center;
+`;
+
+const Description1 = styled.h1`
+  color: hsla(0, 0%, 95.3%, 1);
+  font-size: 12px;
+  margin: 0 0 24px;
+  line-height: 1.5;
+  letter-spacing: 1.5px;
+`;
+const Upload = styled.div`
+  margin-bottom: 2vw;
+  max-width: 500px;
+  height: 500px;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 0;
+  align-items: center;
+  text-align: center;
+
+  width: 100%;
   background-size: 40px 40px;
-  box-shadow: 17px 17px 33px #a8a8a8, -17px -17px 33px #ffffff;
+  background: #e6e7ee;
+  background: url("./images/home-icon.svg") center center no-repeat;
+  border-radius: 47px;
+  box-shadow: inset 5px 5px 10px #d4d5db, inset -5px -5px 10px #f8f9ff;
   input {
     opacity: 0;
     position: relative;
@@ -124,4 +159,32 @@ const Upload = styled.div`
   }
 `;
 
+const Description = styled.div`
+  font-size: 1rem;
+  margin-right: 26px;
+  line-height: 1.5;
+  letter-spacing: 1px;
+  max-width: 350px;
+  text-align: left;
+  h1 {
+    font-weight: normal;
+    font-size: 2rem;
+    line-height: 1;
+  }
+  p {
+  }
+  img {
+    height: 80px;
+    animation: pulsing 3s infinite alternate;
+  }
+  @keyframes pulsing {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+`;
 export default Home;

@@ -7,16 +7,16 @@ html{
 }
 
 body {
-  background-color: #e0e0e0;
-  color: #040714;
-
-  font-family: Avenir-Rioman, sans-serif;
+  background-color: #e6e7ee;
+  color: #31344b;
+  
+  font-family: "Nunito Sans",sans-serif;
   margin: 0;
   padding: 0;
 }
 
 a{
-  color: #040714;
+  color: #31344b;
   text-decoration: none;
 }
 
