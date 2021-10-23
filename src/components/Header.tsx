@@ -1,46 +1,63 @@
 import styled from "styled-components";
 import Web3 from "web3";
+import { useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { selectUserWallet, selectUserPhoto } from "../features/user/userSlice";
+import {
+  selectWalletAddress,
+  selectWalletPhoto,
+  setAccountConectDetails,
+  setAccountDisconectState,
+} from "../features/user/accountSlice";
 import { injected } from "./Connectors";
 
 const Header = (porps: any) => {
-  const { active, account, library, connector, activate, deactivate } =
-    useWeb3React();
-  // const dispatch = useDispatch();
-  // const wallet = useSelector(selectUserWallet);
-  // const walletPhoto = useSelector(selectUserPhoto);
-  // const history = useHistory();
+  const { library, connector, activate, deactivate } = useWeb3React();
+  const dispatch = useDispatch();
+  const walletAddress = useSelector(selectWalletAddress);
+  const walletPhoto = useSelector(selectWalletPhoto);
+  const history = useHistory();
 
-  // async function loadBlockchainData() {
-  //   const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-  //   var accounts = await web3.eth.getAccounts();
-  //   console.log(accounts[0]);
-  // }
+  async function loadBlockchainData() {
+    const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+    var accounts = await web3.eth.getAccounts();
+    if (accounts[0]) {
+      dispatch(
+        await setAccountConectDetails({
+          wallet: accounts[0],
+          photo: "aaa",
+        })
+      );
+    }
+    console.log(accounts[0]);
+  }
 
   async function connect() {
     try {
       await activate(injected);
+      loadBlockchainData();
     } catch (ex) {
       console.log(ex);
     }
   }
 
   async function disconnect() {
-    try {
-      deactivate();
-    } catch (ex) {
-      console.log(ex);
-    }
+    deactivate();
+    setAccountDisconectState();
+    console.log("disconnect ", walletAddress);
   }
+  useEffect(() => {
+    loadBlockchainData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Nav>
-      <Logo>
-        <img src="/images/certificate.png" alt="Certsvise"></img>
+      <Logo href="/">
+        <img src="/images/logoCertsvice.svg" alt="Certsvise"></img>
       </Logo>
-      <NavMenu>
+      {walletAddress ? (<><NavMenu>
         <a href="/home">
           <img src="/images/home-icon.svg" alt="HOME" />
           <span>HOME</span>
@@ -53,12 +70,20 @@ const Header = (porps: any) => {
           <img src="/images/home-icon.svg" alt="HOME" />
           <span>HOME</span>
         </a>
-      </NavMenu>
-
-      {!active ? (
+      </NavMenu> </>) : (<></>)}
+      
+      {!walletAddress ? (
         <Login onClick={connect}>Connect Wallet</Login>
       ) : (
-        <Login onClick={disconnect}> {account} Disconnect</Login>
+        <Login onClick={disconnect}>
+          <img src="/images/metamask.svg" alt="Metamask"></img>{" "}
+          {walletAddress.slice(0, 6) +
+            "..." +
+            walletAddress.slice(
+              walletAddress.length - 4,
+              walletAddress.length
+            )}{" "}
+        </Login>
       )}
     </Nav>
   );
@@ -70,26 +95,38 @@ const Nav = styled.nav`
   left: 0;
   right: 0;
   height: 70px;
-  background-color: #424244;
+  background-color: #e6e7ee;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 36px;
+  padding: 16px 350px 0px;
   letter-spacing: 16px;
   z-index: 3;
+  @media (max-width: 768px) {
+    padding: 16px 36px;
+  }
 `;
 
 const Logo = styled.a`
   padding: 0;
-  width: 80px;
+  width: 48px;
+  height: 48px;
   margin-top: 0px;
-  max-height: 70px;
   font-size: 0;
   display: inline-block;
-
+  border-radius: 11px;
+  background: #e6e7ee;
+  box-shadow: 5px 5px 5px #c4c4ca, -5px -5px 5px #ffffff;
   img {
     display: block;
-    width: 60%;
+    width: 100%;
+    padding: 3px;
+    font-size: 1rem;
+  }
+  &:hover {
+    border-radius: 50px;
+    background: #e6e7ee;
+    box-shadow: 50px 50px 100px #c4c4ca, -50px -50px 100px #ffffff;
   }
 `;
 
@@ -113,7 +150,6 @@ const NavMenu = styled.div`
     display: flex;
     align-items: center;
     padding: 0 12px;
-
     img {
       height: 20px;
       min-width: 20px;
@@ -122,8 +158,7 @@ const NavMenu = styled.div`
     }
 
     span {
-      color: rgb(249, 249, 249);
-      font-size: 13px;
+      font-size: 1rem;
       letter-spacing: 1.42px;
       line-height: 1.08;
       padding: 2px 0px;
@@ -131,7 +166,7 @@ const NavMenu = styled.div`
       position: relative;
 
       &:before {
-        background-color: rgb(249, 249, 249);
+        background-color: rgb(22, 22, 22);
         border-radius: 0px 0px 4px 4px;
         bottom: -6px;
         content: "";
@@ -159,18 +194,25 @@ const NavMenu = styled.div`
 `;
 
 const Login = styled.a`
-  background-color: #424244;
   padding: 8px 16px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  border: 1px solid #f9f9f9;
-  border-radius: 4px;
-  color: #f9f9f9;
+  cursor: pointer;
+  color: #31344b;
   transition: all 0.2s ease 0s;
+  border-radius: 7px;
+  background: #e6e7ee;
+  box-shadow: 5px 5px 10px #adadb3, -5px -5px 10px #ffffff;
+  img {
+    height: 20px;
+    min-width: 20px;
+    width: 20px;
+    z-index: auto;
+  }
   &:hover {
-    background-color: #f9f9f9;
-    color: #000;
-    border-color: transparent;
+    border-radius: 7px;
+    background: #e6e7ee;
+    box-shadow: inset 5px 5px 10px #adadb3, inset -5px -5px 10px #ffffff;
   }
 `;
 
@@ -231,4 +273,5 @@ const SignOut = styled.div`
     }
   }
 `;
+
 export default Header;

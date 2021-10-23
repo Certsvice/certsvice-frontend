@@ -1,10 +1,10 @@
-import {configureStore ,getDefaultMiddleware} from "@reduxjs/toolkit"
-import userReducer from "../features/user/userSlice"
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import accountReducer from "../features/user/accountSlice";
 export default configureStore({
-    reducer: {
-        user: userReducer,
-    },
-    middleware: getDefaultMiddleware({
-        serializable: false,
-    }),
-})
+  reducer: {
+    account: accountReducer,
+  },
+  middleware: getDefaultMiddleware({
+    serializable: false,
+  }),
+});
