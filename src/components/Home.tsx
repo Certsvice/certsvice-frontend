@@ -1,12 +1,13 @@
 import styled from "styled-components";
 import Web3 from "web3";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createRef } from "react";
 import { AbiItem } from "web3-utils";
 import { cerisviceAddress, abi } from "./config";
 
 const Home = (props: any) => {
   const [data, setData] = useState(String);
   const [hash, setHash] = useState(String);
+  const [dropMsg, setDropMsg] = useState("Drag and drop your certsvice file");
 
   const getInput = async (file: any) => {
     console.log(file[0]);
@@ -59,122 +60,166 @@ const Home = (props: any) => {
   return (
     <Container>
       <Content>
-        <Input>
-          <Description1>
-            An easy way to check and verify your certificates
-          </Description1>
-          {/* <Description>
+        <Description>
           <h1>An easy way to check and verify your certificates</h1>
           <p>
             Whether you're a student or an employer, OpenCerts lets you verify
             the certificates you have of anyone from any institution. All in one
             place.
           </p>
-          <img src="/images/certificate.svg" alt="Certificate" />
-        </Description> */}
-        </Input>
-        {/* <Upload>
+          <CertBox>
+            <CertLogo
+              src="https://img.icons8.com/ios-filled/100/44476a/certificate.png"
+              alt="DemoCert"
+            ></CertLogo>
+          </CertBox>
+        </Description>
+        <UploadBox
+          id="parent"
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById("child")!.style.pointerEvents = "none";
+            document.getElementById("parent")!.style.boxShadow =
+              "inset 5px 5px 10px #c4c4ca, inset -5px -5px 10px #ffffff";
+            setDropMsg("Release to Upload");
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById("child")!.style.pointerEvents = "auto";
+            document.getElementById("parent")!.style.boxShadow =
+              "5px 5px 10px #c4c4ca, -5px -5px 10px #ffffff";
+            setDropMsg("Drag and drop your certsvice file");
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById("child")!.style.pointerEvents = "auto";
+            document.getElementById("parent")!.style.boxShadow =
+              "5px 5px 10px #c4c4ca, -5px -5px 10px #ffffff";
+            getInput(e.dataTransfer.files);
+            setDropMsg("Drag and drop your certsvice file");
+          }}
+        >
           <input
+            id="getUpload"
             type="file"
             onChange={(e) => getInput(e.target.files)}
             onClick={(e) => (e.currentTarget.value = "")}
           ></input>
-        </Upload> */}
-        {/* <button onClick={(e) => verify()}>Check</button> */}
+          <Upload id="child">
+            <img
+              src="https://img.icons8.com/ios/100/44476a/drag-and-drop.png"
+              alt="dragdrop"
+            />
+            <DragDrop>
+              <h6>{dropMsg}</h6>
+            </DragDrop>
+            <Separate>
+              <div></div>
+              <p>or</p>
+              <div></div>
+            </Separate>
+            <UploadBtn htmlFor="getUpload">Choose File</UploadBtn>
+          </Upload>
+        </UploadBox>
       </Content>
     </Container>
   );
 };
 
-const Container = styled.section`
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  height: 100vh;
-`;
-
-const Content = styled.div`
-  margin-bottom: 10vw;
-  width: 100%;
-  position: relative;
-  min-height: 100vh;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 80px 40px;
-  height: 100%;
-`;
-
-const Input = styled.div`
-  margin-bottom: 2vw;
-  max-width: 650px;
-  flex-wrap: wrap;
+const Separate = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-top: 0;
   align-items: center;
-  text-align: center;
-  margin-right: auto;
-  margin-left: auto;
-  transition-timing-function: ease-out;
-  transition: opacity 0.2s;
   width: 100%;
+  margin: 1rem 0;
+  div {
+    width: 33%;
+    height: 1px;
+    background-color: #44476a;
+    opacity: 0.3;
+  }
+  p {
+    padding: 0 2rem;
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
 `;
 
-const Description1 = styled.h1`
-  color: hsla(0, 0%, 95.3%, 1);
-  font-size: 12px;
-  margin: 0 0 24px;
-  line-height: 1.5;
-  letter-spacing: 1.5px;
+const DragDrop = styled.div`
+  h6 {
+    margin: 1rem 0 0;
+  }
+`;
+
+const UploadBtn = styled.label`
+  border: none;
+  color: white;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 7px;
+  background: #44476a;
+  &:hover {
+    background: white;
+    color: #44476a;
+  }
 `;
 const Upload = styled.div`
-  margin-bottom: 2vw;
+  border: none;
+  width: 66%;
+  border-radius: 50px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  z-index: 2;
+  img {
+    min-width: 100px;
+    font-size: 10px;
+  }
+`;
+
+const UploadBox = styled.label`
   max-width: 500px;
   height: 500px;
   flex-wrap: wrap;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: 0;
   align-items: center;
-  text-align: center;
+  margin: 0;
 
   width: 100%;
-  background-size: 40px 40px;
+  border-radius: 50px;
   background: #e6e7ee;
-  background: url("./images/home-icon.svg") center center no-repeat;
-  border-radius: 47px;
-  box-shadow: inset 5px 5px 10px #d4d5db, inset -5px -5px 10px #f8f9ff;
+  box-shadow: 5px 5px 10px #c4c4ca, -5px -5px 10px #ffffff;
+
   input {
-    opacity: 0;
-    position: relative;
+    position: static;
     width: 100%;
     height: 100%;
-    display: block;
+    display: none;
   }
+
+  /* &:hover {
+    box-shadow: inset 5px 5px 10px #c4c4ca, inset -5px -5px 10px #ffffff;
+  } */
 `;
 
-const Description = styled.div`
-  font-size: 1rem;
-  margin-right: 26px;
-  line-height: 1.5;
-  letter-spacing: 1px;
-  max-width: 350px;
-  text-align: left;
-  h1 {
-    font-weight: normal;
-    font-size: 2rem;
-    line-height: 1;
-  }
-  p {
-  }
-  img {
-    height: 80px;
+const CertLogo = styled.img`
+  height: 80px;
+`;
+const CertBox = styled.div`
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  ${CertLogo} {
     animation: pulsing 3s infinite alternate;
   }
   @keyframes pulsing {
@@ -187,4 +232,67 @@ const Description = styled.div`
     }
   }
 `;
+const Description = styled.div`
+  margin-right: 26px;
+  max-width: 350px;
+  text-align: center;
+  h1 {
+    margin-bottom: 1rem;
+  }
+`;
+const Content = styled.div`
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+
+  margin-bottom: 10vw;
+`;
+const Container = styled.section`
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: fixed;
+  top: 90px;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  height: calc(100vh - 90px);
+  width: 100vw;
+  @media (min-width: 1280px) {
+    ${Content} {
+      max-width: 1280px;
+      padding-top: 50px;
+      flex-direction: row;
+    }
+    ${Description} {
+      text-align: left;
+    }
+  }
+
+  @media (min-width: 1024px) and (max-width: 1280px) {
+    ${Content} {
+      max-width: 1024px;
+    }
+  }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    ${Content} {
+      max-width: 768px;
+    }
+  }
+  @media (max-width: 640px) {
+    ${Content} {
+      max-width: 640px;
+    }
+  }
+`;
+
 export default Home;
