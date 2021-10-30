@@ -1,4 +1,59 @@
-html{
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap");
+:root {
+  --blue: #0056b3;
+  --indigo: #6610f2;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #a91e2c;
+  --orange: #fd7e14;
+  --yellow: #f0b400;
+  --green: #18634b;
+  --teal: #0056b3;
+  --cyan: #17a2b8;
+  --white: #ecf0f3;
+  --gray: #93a5be;
+  --gray-dark: #525480;
+  --primary: #e6e7ee;
+  --secondary: #2d4cc8;
+  --success: #18634b;
+  --info: #0056b3;
+  --warning: #f0b400;
+  --danger: #a91e2c;
+  --light: #d1d9e6;
+  --dark: #31344b;
+  --default: #262833;
+  --white: #ecf0f3;
+  --gray: #44476a;
+  --neutral: #ecf0f3;
+  --soft: #e6e7ee;
+  --black: #262833;
+  --purple: #6f42c1;
+  --gray-100: #f3f7fa;
+  --gray-200: #fafbfe;
+  --gray-300: #e6e7ee;
+  --gray-400: #d1d9e6;
+  --gray-500: #b1bcce;
+  --gray-600: #93a5be;
+  --gray-700: #66799e;
+  --gray-800: #525480;
+  --facebook: #3b5999;
+  --dribbble: #ea4c89;
+  --github: #222222;
+  --behance: #0057ff;
+  --twitter: #1da1f2;
+  --slack: #3aaf85;
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+html {
   scroll-behavior: smooth;
 }
 
@@ -8,33 +63,96 @@ html{
 
 body {
   background-color: #e6e7ee;
-  color: #31344b;
-  
-  font-family: "Nunito Sans",sans-serif;
+  color: #44476a;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: "Nunito Sans", sans-serif;
   margin: 0;
   padding: 0;
 }
 
-a{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #31344b;
+}
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.5rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1 rem;
+  font-size: 1.25rem;
+  font-weight: 300;
+  font-family: "Nunito Sans", sans-serif;
+  line-height: 1.6;
+}
+
+@media (max-width: 1200px) {
+  h1 {
+    font-size: calc(1.375rem + 1.5vw);
+  }
+  h2 {
+    font-size: calc(1.325rem + 0.9vw);
+  }
+  h3 {
+    font-size: calc(1.3rem + 0.6vw);
+  }
+  h4 {
+    font-size: calc(1.275rem + 0.3vw);
+  }
+  p {
+    font-size: 1rem;
+  }
+}
+a {
   color: #31344b;
   text-decoration: none;
 }
 
-@media only screen and (min-width: 768px){
-  body{
+@media only screen and (min-width: 768px) {
+  body {
     font-size: 16px;
   }
 }
 
-@media only screen and (min-width: 480px) and (max-width:768px){ 
-  body{
+@media only screen and (min-width: 480px) and (max-width: 768px) {
+  body {
     font-size: 15px;
   }
 }
 
-@media only screen and (max-width: 479px){
-  body{
+@media only screen and (max-width: 479px) {
+  body {
     font-size: 14px;
   }
 }
-
