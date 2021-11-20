@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Web3 from "web3";
 import { useState, useEffect, createRef } from "react";
 import { AbiItem } from "web3-utils";
-import { cerisviceAddress, abi } from "./config";
+import { certsviceAddress, abi } from "./config";
 
 const Home = (props: any) => {
   const [data, setData] = useState(String);
@@ -34,7 +34,7 @@ const Home = (props: any) => {
   async function getTest() {
     const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
     var accounts = await web3.eth.getAccounts();
-    const certsvice = new web3.eth.Contract(abi as AbiItem[], cerisviceAddress);
+    const certsvice = new web3.eth.Contract(abi as AbiItem[], certsviceAddress);
 
     try {
       const getData = await certsvice.methods
@@ -211,17 +211,7 @@ const UploadBox = styled.label`
 
 const CertLogo = styled.img`
   height: 80px;
-`;
-const CertBox = styled.div`
-  margin: 1.5rem 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
-  ${CertLogo} {
-    animation: pulsing 3s infinite alternate;
-  }
+  animation: pulsing 3s infinite alternate;
   @keyframes pulsing {
     0%,
     100% {
@@ -232,8 +222,16 @@ const CertBox = styled.div`
     }
   }
 `;
+const CertBox = styled.div`
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+
+`;
 const Description = styled.div`
-  margin-right: 26px;
   max-width: 350px;
   text-align: center;
   h1 {
@@ -275,6 +273,7 @@ const Container = styled.section`
     }
     ${Description} {
       text-align: left;
+      margin-right: 26px;
     }
   }
 

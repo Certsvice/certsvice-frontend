@@ -15,16 +15,15 @@ const accountSlice = createSlice({
     },
 
     setAccountDisconectState: (state) => {
-      state.wallet = null;
-      state.photo = null;
-      
+      state.wallet = "";
+      state.photo = "";
     },
   },
 });
 
 export const { setAccountConectDetails, setAccountDisconectState } =
   accountSlice.actions;
-export const selectWalletAddress = (state) => state.account.wallet;
-export const selectWalletPhoto = (state) => state.account.photo;
+export const selectWalletAddress = (state: any) => state.account.wallet;
+export const selectWalletPhoto = (state: any) => state.account.photo;
 
 export default accountSlice.reducer;
