@@ -1,61 +1,220 @@
 import styled from "styled-components";
 import Web3 from "web3";
+
+import Alert from "./Alert";
+
 import { useEffect, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
-import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+
+import { AbiItem } from "web3-utils";
+import { certsviceAddress, abi } from "./config";
+
+import detectEthereumProvider from "@metamask/detect-provider";
+
+import { useDispatch, useSelector } from "react-redux";
 import {
   selectWalletAddress,
   selectWalletPhoto,
   setAccountConectDetails,
   setAccountDisconectState,
 } from "../features/user/accountSlice";
-import { injected } from "./Connectors";
+import {
+  setAlertDetails,
+  setAlertState,
+  alertActive,
+} from "../features/user/alertSlice";
 
 const Header = (porps: any) => {
-  const { library, connector, activate, deactivate } = useWeb3React();
   const dispatch = useDispatch();
   const walletAddress = useSelector(selectWalletAddress);
-  const walletPhoto = useSelector(selectWalletPhoto);
-  const history = useHistory();
+  const active = useSelector(alertActive);
+  // const walletPhoto = useSelector(selectWalletPhoto);
+  // const history = useHistory();
+
+  const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+  const eth = web3.givenProvider;
+  const certsvice = new web3.eth.Contract(abi as AbiItem[], certsviceAddress);
 
   const [dropClick, setDropClick] = useState(false);
+  async function loadBlockchainData(fromBtn: boolean) {
+    if (eth) {
+      eth.on("accountsChanged", async (accounts: any) => {
+        accounts = await web3.eth.getAccounts();
+        if (accounts[0]) {
+          isUniversity(accounts, false, true);
+        }
+      });
+      eth.on("chainChanged", (chainId: any) => {
+        window.location.reload();
+      });
+      console.log(eth.isConnected());
+      let accounts: any;
 
-  async function loadBlockchainData() {
-    const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-    var accounts = await web3.eth.getAccounts();
-    if (accounts[0]) {
+      if (fromBtn) {
+        await eth.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x3" }],
+        });
+        accounts = await eth.request({ method: "eth_requestAccounts" });
+        if (accounts[0]) {
+          isUniversity(accounts, true, false);
+        }
+        
+      } else {
+        accounts = await web3.eth.getAccounts();
+        console.log("else not from btn", accounts);
+        if (accounts[0]) {
+          isUniversity(accounts, false, false);
+        }
+      }
+      // const accounts = await eth.request({ method: "eth_requestAccounts" });
+      // const accounts = await web3.eth.getAccounts();
+    } else {
+      console.log("Please install MetaMask!");
+    }
+  }
+
+  const isUniversity = async (
+    accounts: string[],
+    check: boolean,
+    onEvent: boolean
+  ) => {
+    // if (!check && !onEvent) {
+    //   await eth.request({
+    //     method: "wallet_requestPermissions",
+    //     params: [{ eth_accounts: {} }],
+    //   });
+    // }
+    const showSuccess = () => {
       dispatch(
-        await setAccountConectDetails({
+        setAccountConectDetails({
           wallet: accounts[0],
           photo: "aaa",
         })
       );
+      dispatch(setAlertState());
+      if (check || onEvent) {
+        console.log("alert from this?");
+        dispatch(
+          setAlertDetails({
+            type: "Success",
+            message: "Wallet Connect Success ",
+            active: true,
+          })
+        );
+      }
+    };
+    const showFail = () => {
+      disconnect();
+      dispatch(setAlertState());
+      if (check || onEvent) {
+        dispatch(
+          setAlertDetails({
+            type: "Alert",
+            message: "Wallet Connect fail Your account not register",
+            active: true,
+          })
+        );
+      }
+    };
+    const checkOwner = await certsvice.methods
+      .getOwner()
+      .call()
+      .then((owner: string) => {
+        console.log(accounts[0], owner);
+        if (accounts[0].toLocaleLowerCase() === owner.toLocaleLowerCase()) {
+          if (window.location.pathname !== "/addUniversity") {
+            window.location.href = "/addUniversity";
+          }
+          console.log("if account == owner");
+          return true;
+        } else {
+          console.log("if account != owner");
+          return false;
+        }
+      })
+      .then((alert: boolean) => {
+        if (alert) {
+          showSuccess();
+        } else {
+          if (window.location.pathname === "/addUniversity") {
+            window.location.href = "/registry";
+          }
+        }
+        return alert;
+      });
+    if (!checkOwner) {
+      console.log("after check owner");
+      certsvice.methods
+        .getUniversity(accounts[0])
+        .call()
+        .then((uni: string) => {
+          console.log(uni, "university");
+          if (uni) {
+            console.log("if case");
+            showSuccess();
+            signIn(accounts[0].toLocaleLowerCase(), uni);
+          } else {
+            console.log("else case");
+            showFail();
+          }
+        });
     }
-  }
+  };
+  const signIn = (address: string, uni: string) => {
+    const data = {
+      address: address ?? "",
+      universityName: uni ?? "",
+    };
+    console.log("data", data);
+    const apiUrl = "http://localhost:8080/signin";
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
 
+    fetch(apiUrl, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        console.log(res);
+        if (res.token) {
+          localStorage.setItem("token", "Bearer " + res.token);
+        } else {
+          dispatch(
+            setAlertDetails({
+              type: "Alert",
+              message: "Sign in fail please check yoour account",
+              active: true,
+            })
+          );
+        }
+      });
+  };
   async function connect() {
-    try {
-      await activate(injected);
-      loadBlockchainData();
-    } catch (ex) {
-      console.log(ex);
-    }
+    loadBlockchainData(true);
   }
 
   async function disconnect() {
-    deactivate();
-    setAccountDisconectState();
+    dispatch(setAccountDisconectState());
+    // if (window.location.pathname !== "/register") {
+    //   window.location.href = "/register";
+    // }
   }
 
   useEffect(() => {
-    loadBlockchainData();
-
+    console.log("from use effect");
+    window.location.pathname === "/"
+      ? console.log("from use effect")
+      : loadBlockchainData(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Nav>
       <Container>
+        {active ? <Alert></Alert> : <></>}
         <Logo href="/">
           <img src="/images/logoCertsvice.svg" alt="Certsvise"></img>
           {/* <h1>ertsvise</h1> */}
@@ -127,23 +286,17 @@ const Header = (porps: any) => {
         {window.location.pathname === "/" ? (
           <></>
         ) : !walletAddress ? (
-          <Login onClick={connect}>Connect Wallet</Login>
+          <Login onClick={connect}>CONNECT WALLET</Login>
         ) : (
           <Login onClick={disconnect}>
             <img src="/images/metamask.svg" alt="Metamask"></img>{" "}
-            {walletAddress.slice(0, 6) +
-              "..." +
-              walletAddress.slice(
-                walletAddress.length - 4,
-                walletAddress.length
-              )}{" "}
+            {walletAddress.slice(0, 6) + "..." + walletAddress.slice(-4)}{" "}
           </Login>
         )}
       </Container>
     </Nav>
   );
 };
-
 const NavMenu = styled.div`
   align-items: center;
   display: flex;
@@ -289,7 +442,7 @@ const Logo = styled.a`
   align-items: flex-end;
   border-radius: 11px;
   background: #e6e7ee;
-  box-shadow: 5px 5px 5px #c4c4ca, -5px -5px 5px #ffffff;
+  box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   img {
     display: block;
     width: 48px;
@@ -314,14 +467,14 @@ const Login = styled.a`
   display: flex;
   align-items: flex-end;
   justify-content: space-evenly;
-  text-transform: uppercase;
+
   letter-spacing: 1.5px;
   cursor: pointer;
   color: #31344b;
   transition: all 0.2s ease 0s;
   border-radius: 7px;
   background: #e6e7ee;
-  box-shadow: 5px 5px 10px #adadb3, -5px -5px 10px #ffffff;
+  box-shadow: 3px 3px 6px #b8b9be, -3px -3px 6px #fff;
   img {
     height: 20px;
     min-width: 20px;
@@ -331,7 +484,7 @@ const Login = styled.a`
   &:hover {
     border-radius: 7px;
     background: #e6e7ee;
-    box-shadow: inset 5px 5px 10px #adadb3, inset -5px -5px 10px #ffffff;
+    box-shadow: inset 3px 3px 6px #b8b9be, inset -3px -3px 6px #fff;
   }
 `;
 
