@@ -10,7 +10,7 @@ import { AbiItem } from "web3-utils";
 import { certsviceAddress, abi } from "./config";
 
 import detectEthereumProvider from "@metamask/detect-provider";
-
+//push
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectWalletAddress,
@@ -59,7 +59,6 @@ const Header = (porps: any) => {
         if (accounts[0]) {
           isUniversity(accounts, true, false);
         }
-        
       } else {
         accounts = await web3.eth.getAccounts();
         console.log("else not from btn", accounts);
