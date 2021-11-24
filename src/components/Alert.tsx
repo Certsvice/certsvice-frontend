@@ -1,21 +1,17 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import {
-  setAlertDetails,
-  setAlertState,
-  alertType,
-  alertMessage,
-  alertActive,
-} from "../features/user/alertSlice";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { alertState } from "../store";
 const AlertComponent = (props: any) => {
-  const dispatch = useDispatch();
-  const type = useSelector(alertType);
-  const message = useSelector(alertMessage);
+  const [alertObj, serAlertObj] = useRecoilState(alertState);
+  const resetAlert = useResetRecoilState(alertState);
+
   const [seconds, setSeconds] = useState(5);
   const tick = () => {
     if (seconds === 0) {
-      dispatch(setAlertState());
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      resetAlert;
     } else {
       setSeconds(seconds - 1);
     }
@@ -33,12 +29,14 @@ const AlertComponent = (props: any) => {
         <AlertBox>
           <Alert
             style={
-              type === "Success" ? { color: "#1a5a47" } : { color: "#a91e2c" }
+              alertObj.type === "Success"
+                ? { color: "#1a5a47" }
+                : { color: "#a91e2c" }
             }
           >
             <Header>
               <span>
-                {type === "Success" ? (
+                {alertObj.type === "Success" ? (
                   <img
                     src="https://img.icons8.com/ios-glyphs/30/1a5a47/facebook-like--v1.png"
                     alt=""
@@ -50,23 +48,31 @@ const AlertComponent = (props: any) => {
                   />
                 )}
               </span>
-              {type}!
+              {alertObj.type}!
               <button
                 onClick={() => {
-                  dispatch(setAlertState());
+                  serAlertObj({
+                    type: "",
+                    message: "",
+                    active: false,
+                  });
                 }}
               >
                 <span>×</span>
               </button>
             </Header>
             <Hr></Hr>
-            <p>{message}</p>
+            <p>{alertObj.message}</p>
             <label>i will close in {seconds} seconds.</label>
           </Alert>
 
           <BlurBG
             onClick={() => {
-              dispatch(setAlertState());
+              serAlertObj({
+                type: "",
+                message: "",
+                active: false,
+              });
             }}
           ></BlurBG>
         </AlertBox>

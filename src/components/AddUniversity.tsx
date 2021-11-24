@@ -4,31 +4,27 @@ import { useState, useEffect } from "react";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import { certsviceAddress, abi } from "./config";
-import detectEthereumProvider from "@metamask/detect-provider";
 
-import { useDispatch, useSelector } from "react-redux";
-import {
-  selectWalletAddress,
-  selectWalletPhoto,
-  setAccountConectDetails,
-  setAccountDisconectState,
-} from "../features/user/accountSlice";
+import { useRecoilState } from "recoil";
+import { accountState } from "../store";
+
 interface universityInterface {
   _id: string;
   address: string;
   universityName: string;
 }
 const Add = () => {
-  const walletAddress = useSelector(selectWalletAddress);
+  const [walletObj, setWalletObj] = useRecoilState(accountState);
+
   const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
   const eth = web3.givenProvider;
   const certsvice = new web3.eth.Contract(abi as AbiItem[], certsviceAddress);
   const addToContract = async () => {
     if (add) {
-      if (walletAddress) {
+      if (walletObj.wallet) {
         const uname = await certsvice.methods
           .addUniversity(add.address, add.universityName)
-          .send({ from: walletAddress })
+          .send({ from: walletObj.wallet })
           .then((result: any) => {
             console.log(result.status);
           });

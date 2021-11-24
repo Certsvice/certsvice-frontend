@@ -4,30 +4,17 @@ import Web3 from "web3";
 import Alert from "./Alert";
 
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 
 import { AbiItem } from "web3-utils";
 import { certsviceAddress, abi } from "./config";
 
-import detectEthereumProvider from "@metamask/detect-provider";
-//push
-import { useDispatch, useSelector } from "react-redux";
-import {
-  selectWalletAddress,
-  selectWalletPhoto,
-  setAccountConectDetails,
-  setAccountDisconectState,
-} from "../features/user/accountSlice";
-import {
-  setAlertDetails,
-  setAlertState,
-  alertActive,
-} from "../features/user/alertSlice";
-
+import { useRecoilState, useRecoilValue } from "recoil";
+import { accountState, alertState } from "../store";
 const Header = (porps: any) => {
-  const dispatch = useDispatch();
-  const walletAddress = useSelector(selectWalletAddress);
-  const active = useSelector(alertActive);
+  const [, setWalletObj] = useRecoilState(accountState);
+  const [, serAlertObj] = useRecoilState(alertState);
+  const alertObj = useRecoilValue(alertState);
+  const walletObj = useRecoilValue(accountState);
   // const walletPhoto = useSelector(selectWalletPhoto);
   // const history = useHistory();
 
@@ -85,35 +72,37 @@ const Header = (porps: any) => {
     //   });
     // }
     const showSuccess = () => {
-      dispatch(
-        setAccountConectDetails({
-          wallet: accounts[0],
-          photo: "aaa",
-        })
-      );
-      dispatch(setAlertState());
+      setWalletObj({
+        wallet: accounts[0],
+        photo: "",
+      });
+      serAlertObj({
+        type: "",
+        message: "",
+        active: false,
+      });
       if (check || onEvent) {
         console.log("alert from this?");
-        dispatch(
-          setAlertDetails({
-            type: "Success",
-            message: "Wallet Connect Success ",
-            active: true,
-          })
-        );
+        serAlertObj({
+          type: "Success",
+          message: "Wallet Connect Success ",
+          active: true,
+        });
       }
     };
     const showFail = () => {
       disconnect();
-      dispatch(setAlertState());
+      serAlertObj({
+        type: "",
+        message: "",
+        active: false,
+      });
       if (check || onEvent) {
-        dispatch(
-          setAlertDetails({
-            type: "Alert",
-            message: "Wallet Connect fail Your account not register",
-            active: true,
-          })
-        );
+        serAlertObj({
+          type: "Alert",
+          message: "Wallet Connect fail Your account not register",
+          active: true,
+        });
       }
     };
     const checkOwner = await certsvice.methods
@@ -182,13 +171,11 @@ const Header = (porps: any) => {
         if (res.token) {
           localStorage.setItem("token", "Bearer " + res.token);
         } else {
-          dispatch(
-            setAlertDetails({
-              type: "Alert",
-              message: "Sign in fail please check yoour account",
-              active: true,
-            })
-          );
+          serAlertObj({
+            type: "Alert",
+            message: "Sign in fail please check yoour account",
+            active: true,
+          });
         }
       });
   };
@@ -197,7 +184,10 @@ const Header = (porps: any) => {
   }
 
   async function disconnect() {
-    dispatch(setAccountDisconectState());
+    setWalletObj({
+      wallet: "",
+      photo: "",
+    });
     // if (window.location.pathname !== "/register") {
     //   window.location.href = "/register";
     // }
@@ -213,7 +203,7 @@ const Header = (porps: any) => {
   return (
     <Nav>
       <Container>
-        {active ? <Alert></Alert> : <></>}
+        {alertObj.active ? <Alert></Alert> : <></>}
         <Logo href="/">
           <img src="/images/logoCertsvice.svg" alt="Certsvise"></img>
           {/* <h1>ertsvise</h1> */}
@@ -284,12 +274,12 @@ const Header = (porps: any) => {
 
         {window.location.pathname === "/" ? (
           <></>
-        ) : !walletAddress ? (
+        ) : !walletObj.wallet ? (
           <Login onClick={connect}>CONNECT WALLET</Login>
         ) : (
           <Login onClick={disconnect}>
             <img src="/images/metamask.svg" alt="Metamask"></img>{" "}
-            {walletAddress.slice(0, 6) + "..." + walletAddress.slice(-4)}{" "}
+            {walletObj.wallet.slice(0, 6) + "..." + walletObj.wallet.slice(-4)}{" "}
           </Login>
         )}
       </Container>
