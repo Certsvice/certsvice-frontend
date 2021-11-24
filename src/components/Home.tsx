@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Web3 from "web3";
-import { useState, useEffect, createRef } from "react";
+import { useState } from "react";
 import { AbiItem } from "web3-utils";
 import { certsviceAddress, abi } from "./config";
 

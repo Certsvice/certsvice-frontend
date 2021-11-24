@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useState, ChangeEvent, useEffect } from "react";
 import universitites from "./university.json";
-import { useDispatch, useSelector } from "react-redux";
-import { setAlertDetails, setAlertState } from "../features/user/alertSlice";
-import { selectWalletAddress } from "../features/user/accountSlice";
+
+import { useRecoilState, useRecoilValue } from "recoil";
+import { accountState, alertState } from "../store";
 interface universityInterface {
   UniversityName: string;
   UniversityCode: string;
@@ -22,8 +22,8 @@ interface studentInterface {
   trancript: [{}];
 }
 const Registry = () => {
-  const dispatch = useDispatch();
-  const walletAddress = useSelector(selectWalletAddress);
+  const [walletObj, setWalletObj] = useRecoilState(accountState);
+  const [alertObj, serAlertObj] = useRecoilState(alertState);
   const [register, setRegister] = useState<Partial<Register>>({});
   const [student, setStudent] = useState<studentInterface[]>([]);
   const [uValidate, setUValidate] = useState("");
@@ -73,14 +73,12 @@ const Registry = () => {
         console.log(res);
         if (res.token) {
           localStorage.setItem("token", "Bearer " + res.token);
-          dispatch(
-            setAlertDetails({
-              type: "Success",
-              message:
-                "Thank you for signing up. We will sign up to contract as soon as possible.",
-              active: true,
-            })
-          );
+          serAlertObj({
+            type: "Success",
+            message:
+              "Thank you for signing up. We will sign up to contract as soon as possible.",
+            active: true,
+          });
         } else {
           console.log("error");
         }
@@ -116,7 +114,7 @@ const Registry = () => {
   return (
     <Container>
       <Content>
-        {!walletAddress ? (
+        {!walletObj.wallet ? (
           <SignUpBox>
             <h4>SignUp University Account</h4>
             <FormInput
