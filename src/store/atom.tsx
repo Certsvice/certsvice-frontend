@@ -1,17 +1,19 @@
-import { atom } from "recoil";
+import { atom, selector } from "recoil";
 
 export const accountState = atom({
   key: "accountState",
   default: {
-    wallet: "",
-    photo: "",
+    address: "",
+    balance: "",
   },
 });
 
 export const alertState = atom({
   key: "alertState",
   default: {
-    type: "Success",
+    type: "",
+    header: "",
+    msg: "",
     message: "",
     active: false,
   },
