@@ -1,89 +1,5 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
-
-import { useRecoilState, useResetRecoilState } from "recoil";
-import { alertState } from "../store";
-const AlertComponent = (props: any) => {
-  const [alertObj, serAlertObj] = useRecoilState(alertState);
-  const resetAlert = useResetRecoilState(alertState);
-
-  const [seconds, setSeconds] = useState(5);
-  const tick = () => {
-    if (seconds === 0) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      resetAlert;
-    } else {
-      setSeconds(seconds - 1);
-    }
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      tick();
-    }, 1000);
-    return () => clearInterval(timer);
-  });
-  return (
-    <Container>
-      <Content>
-        <AlertBox>
-          <Alert
-            style={
-              alertObj.type === "Success"
-                ? { color: "#1a5a47" }
-                : { color: "#a91e2c" }
-            }
-          >
-            <Header>
-              <span>
-                {alertObj.type === "Success" ? (
-                  <img
-                    src="https://img.icons8.com/ios-glyphs/30/1a5a47/facebook-like--v1.png"
-                    alt=""
-                  />
-                ) : (
-                  <img
-                    src="https://img.icons8.com/ios-glyphs/30/a91e2c/fire-element--v1.png"
-                    alt=""
-                  />
-                )}
-              </span>
-              {alertObj.type}!
-              <button
-                onClick={() => {
-                  serAlertObj({
-                    type: "",
-                    message: "",
-                    active: false,
-                  });
-                }}
-              >
-                <span>×</span>
-              </button>
-            </Header>
-            <Hr></Hr>
-            <p>{alertObj.message}</p>
-            <label>i will close in {seconds} seconds.</label>
-          </Alert>
-
-          <BlurBG
-            onClick={() => {
-              serAlertObj({
-                type: "",
-                message: "",
-                active: false,
-              });
-            }}
-          ></BlurBG>
-        </AlertBox>
-      </Content>
-    </Container>
-  );
-};
-
-export default AlertComponent;
-
-const Hr = styled.hr`
+export const Hr = styled.hr`
   border: 0;
   border-top: 2px solid;
   height: 0;
@@ -91,7 +7,7 @@ const Hr = styled.hr`
   width: 100%;
   margin: 0;
 `;
-const Header = styled.div`
+export const Header = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -101,9 +17,9 @@ const Header = styled.div`
   width: 100%;
   font-size: 1.5rem;
   padding-bottom: 0.5rem;
+
   span {
     margin: 0px 1rem 0px 0px !important;
-    max-width: 2.5rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -136,7 +52,7 @@ const Header = styled.div`
     }
   }
 `;
-const Alert = styled.div`
+export const Alert = styled.div`
   background: #e6e7ee;
   padding: 1rem 1.5rem;
   opacity: 1 !important;
@@ -155,6 +71,9 @@ const Alert = styled.div`
     margin-bottom: 0;
     font-size: 1rem;
   }
+  label {
+    margin-top: 10px;
+  }
   animation: pulsing 0.5s;
   @keyframes pulsing {
     0% {
@@ -171,7 +90,7 @@ const Alert = styled.div`
     }
   }
 `;
-const BlurBG = styled.div`
+export const BlurBG = styled.div`
   position: fixed;
   z-index: 1010;
   top: 0;
@@ -182,7 +101,7 @@ const BlurBG = styled.div`
   opacity: 0.5;
   width: 100%;
 `;
-const AlertBox = styled.div`
+export const AlertBox = styled.div`
   max-width: 500px;
   width: 100%;
 
@@ -195,7 +114,7 @@ const AlertBox = styled.div`
   justify-content: center;
 `;
 
-const Content = styled.div`
+export const Content = styled.div`
   width: 100%;
   margin-right: auto;
   margin-left: auto;
@@ -208,7 +127,7 @@ const Content = styled.div`
   justify-content: center;
   height: auto;
 `;
-const Container = styled.section`
+export const Container = styled.section`
   overflow: hidden;
   position: fixed;
   z-index: 1000;
